@@ -36,7 +36,7 @@ This dataset was recorded
 
 ------------------------------------------------------------------------
 
-./CNN_Place365/ folder:
+./CNN_Place205/ folder:
 This folder was created by Akira Taniguchi.
-The csv files were extracted by Caffe using a reference model Places-365 Resnet.
+The csv files were extracted by Caffe using a reference model Places-205.
 These visual features come from albert-B-laser-vision-dataset.
