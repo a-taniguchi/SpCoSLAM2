@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SpCoSLAM 2.0
 
 Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
@@ -5,7 +6,7 @@ This is the source codes used in the experiment of our paper of IROS 2018.
 
 ## Abstract of SpCoSLAM 2.0
 We propose a novel online learning algorithm, SpCoSLAM 2.0 for spatial concepts and lexical acquisition with higher accuracy and scalability.
-In previous work, we proposed SpCoSLAM as an online learning algorithm based on the Rao-Blackwellized particle filter.
+In previous work, we proposed SpCoSLAM as an online learning algorithm based on the Rao--Blackwellized particle filter.
 The proposed method can simultaneously learn place categories and lexicons while incrementally generating an environmental map. 
 However, this conventional algorithm had problems such as the decrease of the estimation accuracy due to the influence of the early stages of learning as well as the increase of the computational complexity with the increase of the training data.
 Therefore, we first developed an improved algorithm by introducing new techniques such as rejuvenation.
@@ -63,3 +64,7 @@ https://youtu.be/_6S-mNtjn44
 
 2018/05/19  Akira Taniguchi  
 
+=======
+# SpCoSLAM2
+Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
+>>>>>>> 1e6bcc1c75efb1e867fca127c8da20eb2d0cd6be
