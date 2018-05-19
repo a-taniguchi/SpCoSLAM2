@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SpCoSLAM 2.0
 
 Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
@@ -63,3 +64,7 @@ https://youtu.be/_6S-mNtjn44
 
 2018/05/19  Akira Taniguchi  
 
+=======
+# SpCoSLAM2
+Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
+>>>>>>> 1e6bcc1c75efb1e867fca127c8da20eb2d0cd6be
