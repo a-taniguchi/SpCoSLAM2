@@ -1,0 +1,1 @@
+/home/akira/Dropbox/SpCoSLAM/data/alg2wicWSLAG10lln008/1/fst_gmm/000.fst
