@@ -1,7 +1,7 @@
 # SpCoSLAM 2.0
 
 Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
-This is the source codes used in the experiment of our paper of IROS 2018.  
+This is the source codes used in the experiment of our paper.  
 
 ## Abstract of SpCoSLAM 2.0
 We propose a novel online learning algorithm, SpCoSLAM 2.0 for spatial concepts and lexical acquisition with higher accuracy and scalability.
@@ -50,7 +50,7 @@ In our paper of IROS2018, we used a rosbag file of open-dataset [albert-B-laser-
 ---
 If you use this program to publish something, please describe the following citation information.
 
-Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "SpCoSLAM 2.0: An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", arXiv:1803.03481, 2018. (Preprint submitted to IROS2018)  
+Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "SpCoSLAM 2.0: An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", arXiv:1803.03481, 2018. (Preprint submitted)  
 
 Original paper:  
 https://arxiv.org/abs/1803.03481  
@@ -61,5 +61,5 @@ https://youtu.be/TN081g15G84
 https://youtu.be/_6S-mNtjn44  
 
 
-2018/05/19  Akira Taniguchi  
+2018/11/22  Akira Taniguchi  
 
