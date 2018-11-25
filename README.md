@@ -56,10 +56,11 @@ Original paper:
 https://arxiv.org/abs/1803.03481  
 
 
-Sample video:
+Sample video:  
 https://youtu.be/TN081g15G84  
 https://youtu.be/_6S-mNtjn44  
 
+2018/05/19  Akira Taniguchi  
+2018/11/22  Akira Taniguchi (update)  
 
-2018/11/22  Akira Taniguchi  
 
