@@ -14,7 +14,7 @@
 - `JuliusLattice_dec.py`: The speech files are recognized by the speech recognition Julius. It can get WFST speech recognition results for learning programs. (version changeable to HMM-GMM or HMM-DNN by setting of __init__.py)  
 - `README.txt`: This file  
 - `SpCoSLAM2.0.sh`: A main execution script for online learning of SpCoSLAM 2.0  
-- `\_\_init\_\_.py`: A file for setting file paths and initial hyper-parameters  
+- `__init__.py`: A file for setting file paths and initial hyper-parameters  
 - `autovisualization.py`: A program for automatically drawing learning results sequentially
 (Save can be done with screenshots etc.)
 - `collectmapclocktime.py`: The times on the generated map files in one file collectively. For creating a movie.
