@@ -1,7 +1,12 @@
 # SpCoSLAM 2.0
 
 Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
-This is the source codes used in the experiment of our paper.  
+This repository includes the source codes used for the experiments in our paper.  
+
+【Other repositories】  
+ [SpCoSLAM_Lets](https://github.com/EmergentSystemLabStudent/SpCoSLAM_Lets): Wrapper of SpCoSLAM for mobile robots (Recommended)  
+ [SpCoSLAM](https://github.com/a-taniguchi/SpCoSLAM): Implementation of SpCoSLAM (Online Spatial Concept and Lexical Acquisition with Simultaneous Localization and Mapping)   
+ [SpCoSLAM_evaluation](https://github.com/a-taniguchi/SpCoSLAM_evaluation): The codes for the evaluation or the visualization in our paper  
 
 ## Abstract of SpCoSLAM 2.0
 We propose a novel online learning algorithm, SpCoSLAM 2.0 for spatial concepts and lexical acquisition with higher accuracy and scalability.
@@ -11,14 +16,17 @@ However, this conventional algorithm had problems such as the decrease of the es
 Therefore, we first developed an improved algorithm by introducing new techniques such as rejuvenation.
 Next, we developed a scalable algorithm to reduce the calculation time while maintaining a higher accuracy than the conventional algorithm.
 
+Figure: The graphical model of SpCoSLAM   
+<img src="https://github.com/a-taniguchi/SpCoSLAM/blob/master/img/graphicalmodel02.jpg" width="520px">
+
 
 ## 【Execution environment】  
 - Ubuntu 14.04  
 - Python 2.7.6  
 - ROS indigo  
-- CNN feature extracter: Caffe (Reference model:[Places-365 resnet152](http://places.csail.mit.edu/))  
-- Speech recognition system: Julius dictation-kit-v4.4 (Using Japanese syllabary dictionary, lattice output)  
-- If you perform the lexical acquisition (unsupervised word segmentaiton)： [latticelm 0.4](http://www.phontron.com/latticelm/) and OpenFST  
+- CNN feature extracter: Caffe (Reference model: [Places-365 resnet152](http://places.csail.mit.edu/))  
+- Speech recognition system: Julius dictation-kit-v4.4 GMM-HMM/DNN-HMM (Using Japanese syllabary dictionary, lattice output)  
+- If you perform the lexical acquisition (unsupervised word segmentaiton): [latticelm 0.4](http://www.phontron.com/latticelm/) and OpenFST  
 
 In our paper of IROS2018, we used a rosbag file of open-dataset [albert-B-laser-vision-dataset](https://dspace.mit.edu/handle/1721.1/62291).
 
@@ -62,5 +70,5 @@ https://youtu.be/_6S-mNtjn44
 
 2018/05/19  Akira Taniguchi  
 2018/11/22  Akira Taniguchi (update)  
-
+2018/12/23  Akira Taniguchi (update)  
 

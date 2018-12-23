@@ -1,6 +1,8 @@
 #! /bin/sh
-#Akira Taniguchi 2017/02/03-
+#Akira Taniguchi 2017/02/03-2018/11/25
+#The path setting of the output data folder is necessary.
 
+DATAPATH='/home/akira/Dropbox/SpCoSLAM/data/'
 
 echo -n "trialname?(output_folder) >"
 read trialname
@@ -11,13 +13,14 @@ read trialname
 #trialname=test3
 datasetNUM=0
 
-echo $trialname > /home/akira/Dropbox/SpCoSLAM/data/trialname.txt
+echo $trialname > $DATAPATH'trialname.txt'
 
-mkdir /home/akira/Dropbox/SpCoSLAM/data/$trialname
-mkdir /home/akira/Dropbox/SpCoSLAM/data/$trialname/particle
-mkdir /home/akira/Dropbox/SpCoSLAM/data/$trialname/weight
-mkdir /home/akira/Dropbox/SpCoSLAM/data/$trialname/map
-mkdir /home/akira/Dropbox/SpCoSLAM/data/$trialname/img
+echo $DATAPATH$trialname
+mkdir $DATAPATH$trialname
+mkdir $DATAPATH$trialname'/particle'
+mkdir $DATAPATH$trialname'/weight'
+mkdir $DATAPATH$trialname'/map'
+mkdir $DATAPATH$trialname'/img'
 
 SCAN=scan
 gnome-terminal --command './run_roscore.sh'

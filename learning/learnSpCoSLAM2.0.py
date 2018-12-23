@@ -18,7 +18,7 @@
 #[2.0]場所概念の重みにit,ctの項を追加
 #[2.0]latticelm→場所概念学習→NPYLMの結果を辞書登録
 #[2.0]言語モデル選択の重みをStデータ全てから計算し利用するか切り替え対応
-#[2.0]固定ラグ活性化（stのサンプリング,LMの更新）
+#[2.0]Fixed-lag Rejuvenation（stのサンプリング,LMの更新）
 #latticelmのCPU並列化処理
 #JuliusのGMM・DNN切り替え対応(DNN確認)
 #ラティスの音響スコアを対数尤度と尤度に切り替え対応
@@ -27,7 +27,7 @@
 
 ###動作未確認###
 #PosteriorParameterGIW
-#[2.0]固定ラグ活性化（it,ctのサンプリング）
+#[2.0]Fixed-lag Rejuvenation（it,ctのサンプリング）
 
 
 ##########---保留---##########
@@ -509,21 +509,23 @@ def ParticleSearcher(trialname):
     #print c_count,i
     p_trajectory[i][c_count] = p[c_count][i]
     
-    if (step == 1):
-      CT[i] = CTtemp[i]
-      IT[i] = ITtemp[i]
-    elif (step == 2):
+    #if (step == 1): ##CT,ITは空の配列
+    #  CT[i] = CTtemp[i]
+    #  IT[i] = ITtemp[i]
+    #el
+    if (step == 2): ##step==1のときの推定値を強制的に1にする
       CT[i] = [1]
       IT[i] = [1]
     elif (steplist[-2][0] == m_count): #m_countが直前のステップにおいても同じ場合の例外処理
       print "m_count", steplist[-2][0], steplist[-1][0]
       CT[i] = [ CTtemp[i][s] for s in xrange(step-1)]
       IT[i] = [ ITtemp[i][s] for s in xrange(step-1)]
+    
     for c in xrange(m_count-1):  #0～最後から2番目の配列まで
       preID = p[c_count][p_trajectory[i][c_count].id].pid
       p_trajectory[i][c_count-1] = p[c_count-1][preID]
-
-      if (step != 1) and (step != 2):
+      
+      if (step != 1) and (step != 2) and (steplist[-2][0] != m_count):
        if (steplist[-2][0] == c_count): #CTtemp,ITtempを現在のパーティクルID順にする
           CT[i] = [ CTtemp[preID][s] for s in xrange(step-1)]
           IT[i] = [ ITtemp[preID][s] for s in xrange(step-1)]
@@ -535,7 +537,7 @@ def ParticleSearcher(trialname):
   for i in xrange(R):
     #preID = p[m_count-1][p_trajectory[i][c_count].id].pid
     #test
-    X_To[i] = [p_trajectory[i][steplist[s][0]-1] for s in xrange(step)] ##steplist[s][0]-1はsでよいのでは？
+    X_To[i] = [p_trajectory[i][steplist[s][0]-1] for s in xrange(step)] ##steplist[s][0]-1はsでよいのでは？->ダメ
   
   return X_To, step, m_count, CT, IT
 
@@ -722,7 +724,7 @@ def WordDictionaryUpdate(step, filename, W_list):
             print W_list_sj,W_list[c] + " (one name)"
             
     print JuliusVer,HMMtype
-    if (JuliusVer == "v4.4" and HMMtype == "DNN"):
+    if (JuliusVer == "v4.4" and HMMtype == "DNN" and WDs != "S"):
       #hatsuonのすべての単語の音素表記を"*_I"にする
       for i in range(len(hatsuon)):
         hatsuon[i] = hatsuon[i].replace("_S","_I")
@@ -740,6 +742,19 @@ def WordDictionaryUpdate(step, filename, W_list):
         #hatsuonの単語の音素の例外処理（N,q）
         hatsuon[i] = hatsuon[i].replace("q_S","q_I")
         hatsuon[i] = hatsuon[i].replace("q_B","q_I")
+        hatsuon[i] = hatsuon[i].replace("N_S","N_I")
+        #print type(hatsuon),hatsuon,type("N_S"),"N_S"
+    elif (JuliusVer == "v4.4" and HMMtype == "DNN" and WDs == "S"):
+      #hatsuonのすべての単語の音素表記を"*_S"にする
+      for i in range(len(hatsuon)):
+        hatsuon[i] = hatsuon[i].replace("_I","_S")
+        hatsuon[i] = hatsuon[i].replace("_B","_S")
+        hatsuon[i] = hatsuon[i].replace("_E","_S")
+      
+      for i in range(len(hatsuon)):
+        #hatsuonの単語の音素の例外処理（N,q）
+        hatsuon[i] = hatsuon[i].replace("q_S","q_I")
+        #hatsuon[i] = hatsuon[i].replace("q_B","q_I")
         hatsuon[i] = hatsuon[i].replace("N_S","N_I")
         #print type(hatsuon),hatsuon,type("N_S"),"N_S"
   
@@ -1010,7 +1025,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       IT.append( it )
       
       ##############################################################
-      #固定ラグ活性化
+      #Fixed-lag Rejuvenation
       if (LAG != 0):
         ###カウント数が追加されたデータをもとに、ラグ値ごとにリサンプリング
         for lag in xrange(LAG-1):
