@@ -9,9 +9,11 @@ This repository includes the source codes used for the experiments in our paper.
  [SpCoSLAM_evaluation](https://github.com/a-taniguchi/SpCoSLAM_evaluation): The codes for the evaluation or the visualization in our paper  
 
 ## Abstract of SpCoSLAM 2.0
-We propose a novel online learning algorithm, SpCoSLAM 2.0 for spatial concepts and lexical acquisition with higher accuracy and scalability.
+We propose a novel online learning algorithm, SpCoSLAM 2.0 for spatial concepts and lexical acquisition with higher accuracy and scalability.Changes not staged for commit:
+
 In previous work, we proposed SpCoSLAM as an online learning algorithm based on the Rao-Blackwellized particle filter.
-The proposed method can simultaneously learn place categories and lexicons while incrementally generating an environmental map. 
+The proposed method can simultaneously learn place categories and lexicons while incrementally generating an environmental map. Changes not staged for commit:
+
 However, this conventional algorithm had problems such as the decrease of the estimation accuracy due to the influence of the early stages of learning as well as the increase of the computational complexity with the increase of the training data.
 Therefore, we first developed an improved algorithm by introducing new techniques such as rejuvenation.
 Next, we developed a scalable algorithm to reduce the calculation time while maintaining a higher accuracy than the conventional algorithm.
@@ -58,7 +60,7 @@ In our paper of IROS2018, we used a rosbag file of open-dataset [albert-B-laser-
 ---
 If you use this program to publish something, please describe the following citation information.
 
-Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "SpCoSLAM 2.0: An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", arXiv:1803.03481, 2018. (Preprint submitted)  
+Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", arXiv:1803.03481, 2018. (Preprint submitted)  
 
 Original paper:  
 https://arxiv.org/abs/1803.03481  
@@ -71,4 +73,5 @@ https://youtu.be/_6S-mNtjn44
 2018/05/19  Akira Taniguchi  
 2018/11/22  Akira Taniguchi (update)  
 2018/12/23  Akira Taniguchi (update)  
+2019/01/08  Akira Taniguchi (update)  
 
