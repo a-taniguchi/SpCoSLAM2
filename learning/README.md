@@ -35,14 +35,24 @@
 
 
 -----
-[How to visualize the position distributions on rviz]  
-`roscore`  
-`rviz -d ./*/SpCoSLAM/learning/saveSpCoMAP_online.rviz `  
-`python ./autovisualization.py p30a20g10sfix008`  
+[How to visualize the position distributions on rviz]   
 
-In case of individual specification  
-`rosrun map_server map_server ./p30a20g10sfix008/map/map361.yaml`  
-`python ./new_place_draw.py p30a20g10sfix008 50 23 `  
+(Terminal 1)   
+`$ roscore`   
+(Terminal 2)  
+`$ rviz -d ./*/SpCoSLAM/learning/saveSpCoMAP_online.rviz `  
+(Terminal 3)  
+`$ python ./autovisualization.py LEARNING_RESULT_FOLDER`  
+   For example, `LEARNING_RESULT_FOLDER` is p30a20g10sfix008.  
+
+Visualization of the position distributions at a specific step and particle (individual specification):  
+(Terminal 1)  
+`$ rosrun map_server map_server ./LEARNING_RESULT_FOLDER/map/map***.yaml`  
+   `***` is `m_count` number (Pleaes see `m_count2step.csv`.)  
+(Terminal 2)  
+`$ python ./new_place_draw.py LEARNING_RESULT_FOLDER STEP PARTICLE_ID `  
+(Terminal 3)  
+`$ rviz -d ./*/SpCoSLAM/learning/saveSpCoMAP_online.rviz `  
  
 -------------------------------------------------  
 Updated date  
