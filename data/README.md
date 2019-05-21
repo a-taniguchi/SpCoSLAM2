@@ -1,6 +1,6 @@
 # Learning results folder /data/  
 
- - /trialname/ ("trialname" is the name of the trial, e.g., p30a20g10sfix008)
+ - /trialname/ ("trialname" is the name of the trial, e.g., alg2wicWSLAG10lln008)
    - /x/: x is the number of learning steps (the number of teaching utterances)  
      - /fst_gmm/: WFST output folder of speech recognition results by Julius  
      - /out_gmm/: output folder for word segmentation results by latticelm  
