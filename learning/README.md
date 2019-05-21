@@ -54,6 +54,12 @@ Visualization of the position distributions at a specific step and particle (ind
 (Terminal 3)  
 `$ rviz -d ./*/SpCoSLAM/learning/saveSpCoMAP_online.rviz `  
  
+ 
+ How to find particle ID at a certain step in the past for a maximum likelihood particle in step 50:  
+ 1. Open `./50/weights.csv`. See a value in first line. This number is a maximum likelihood particle ID.  
+ 2. Open `./50/particle*.csv` (* is a maximum likelihood particle ID.) See item in STEP row 7 column.  
+ 
+ 
 -------------------------------------------------  
 Updated date  
 2017/02/12, 03/12, 
