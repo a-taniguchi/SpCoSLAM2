@@ -1,10 +1,10 @@
 #coding:utf-8
 
 ##############################################
-# SpCoSLAM 2.0 online learning program
+# SpCoSLAM 2.0 online learning program (For SIGVerse data, not use ROS)
 # Fixed-lag Rejuvenation of Ct, it, and St
 # Re-segmentation of word sequences using NPYLM
-# Akira Taniguchi 2017/01/18-2017/02/02-2017/02/15-2017/02/21-2018/02/16-2018/12/22
+# Akira Taniguchi 2017/01/18-2018/12/22-2019/10/02-
 ##############################################
 
 # 注意：gmappingと合わせてパーティクル番号の対応関係が合っているか要確認 (評価用の方と合わせて確認が必要)
@@ -108,6 +108,58 @@ def ReadImageData(trialname, datasetname, step):
       itemList = line[:].split(',')
     FT.append( [float(itemList[i]) for i in xrange(DimImg)] )
   return FT
+
+#########################################################################
+# Reading data for image feature (For SIGVerse)
+def ReadImageData_SIGVerse(trialname, datasetname, step):
+  FT = []
+  files = glob.glob(datasetfolder + datasetname + '/' + Descriptor + "/*.csv")
+  files.sort()
+
+  for s in xrange(step):
+    FT_temp = []
+    i = 0
+    for line in open( files[s], 'r'):
+      #itemList = line[:].split(',')
+      if (i < DimImg):
+        FT_temp.append(float(line)*Feture_times)
+      i += 1
+    if (Feture_noize > 0):
+      FT_temp = [FT_temp[i]+(Feture_noize/float(DimImg)) for i in range(DimImg)] 
+    if (Feture_sum_1 == 1):
+      Ft_sum = sum(FT_temp)
+      FT_temp = [FT_temp[i]/float(Ft_sum) for i in range(DimImg)] 
+    FT.append( FT_temp )
+    #print files[s]
+
+  if( step != len(FT) ):
+    print "ERROR FT", step, len(FT)
+  else:
+    print "READ FT", step, len(FT[0])
+  #print FT
+  return FT
+#########################################################################
+
+#########################################################################
+#位置情報の読み込み For SIGVerse
+def ReadPositionData_SIGVerse(trialname, datasetname, step):
+  XT = []
+  i = 0
+  for line in open( datasetfolder + datasetname + '/position/position_AURO.csv', 'r'):
+      if (i < step):
+        itemList = line[:].split(',')
+        #XT.append( (float(itemList[0]), float(itemList[1])) )
+        XT.append( Particle( int(i), float(itemList[0]), float(itemList[1]), float(0), float(1.0/R), int(0) ) )
+      i += 1
+  
+  if( step != len(XT) ):
+    print "ERROR XT", step, len(XT)
+  #X_To = [ [Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for c in xrange(step)] for i in xrange(R) ]
+  else:
+    print "READ XT", step
+  #print XT
+  return XT
+#########################################################################
 
 # Reading data for image feature
 #時刻情報を取得して、一番近い画像特徴ファイルを読み込むようにする
@@ -440,6 +492,65 @@ def WriteParticleData(filename, step, particle, Xp, p_weight, ct, it, CT, IT):
       fp.write('\n')
   fp.write( str(cstep) + "," + str(Xp[cstep].id) + "," + str(Xp[cstep].x) + "," + str(Xp[cstep].y) + "," + str(Xp[cstep].theta) + "," + str(p_weight) + "," + str(Xp[cstep].pid) + "," + str(ct) + "," + str(it) )
   fp.write('\n')
+
+#########################################################################
+#パーティクル情報の保存 For SIGVerse
+def WriteParticleData_SIGVerse(filename, step, particles_NEW):
+  #cstep = step - 1
+  #ID,x,y,theta,weight,pID,Ct,it
+  fp1 = open( filename + "/particles_NEW_CT.csv", 'w')
+  fp2 = open( filename + "/particles_NEW_IT.csv", 'w')
+  for r in range(R):
+    for s in xrange(step):
+        fp1.write( str(particles_NEW[r][0][s]) )
+        fp2.write( str(particles_NEW[r][1][s]) )
+        if (s != step-1):
+          fp1.write( ',' )
+          fp2.write( ',' )
+    fp1.write('\n')
+    fp2.write('\n')    
+    #fp.write( str(cstep) + "," + str(Xp[cstep].id) + "," + str(Xp[cstep].x) + "," + str(Xp[cstep].y) + "," + str(Xp[cstep].theta) + "," + str(p_weight) + "," + str(Xp[cstep].pid) + "," + str(ct) + "," + str(it) )
+#########################################################################
+
+#########################################################################
+#パーティクル情報の読み込み For SIGVerse
+def ReadParticleData_SIGVerse(trialname, step):
+  #CT,IT = [],[]
+  CT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
+  IT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
+  #cstep = step - 1
+  if (step != 1):
+    #ID,x,y,theta,weight,pID,Ct,it
+    r = 0
+    for line in open( datafolder + trialname + "/" + str(step-1) + "/particles_NEW_CT.csv", 'r'):
+        itemList = line[:-1].split(',')
+        for i in range(len(itemList)):
+          #CT.append( int(itemList[i]) )
+          CT[r][i] = int(itemList[i])
+        r += 1
+    r = 0
+    for line in open( datafolder + trialname + "/" + str(step-1) + "/particles_NEW_IT.csv", 'r'):
+        itemList = line[:-1].split(',')
+        for i in range(len(itemList)):
+          #IT.append( int(itemList[i]) )
+          IT[r][i] = int(itemList[i])
+        r += 1
+  #elif (step == 1):
+  #  CT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
+  #  IT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
+  #  print "Initialize CT:",CT,"IT:",IT
+  print "CT:",CT
+  print "IT:",IT
+  return CT,IT
+
+  #for r in range(R):
+  #  for s in xrange(step):
+  #      #fp1.write( str(particles_NEW[r][0][s]) + ',' )
+  #      #fp2.write( str(particles_NEW[r][1][s]) + ',' )
+  #  #fp1.write('\n')
+  #  #fp2.write('\n')    
+#########################################################################
+
 
 #パーティクルごとに単語情報を保存
 def WriteWordData(filename, particle, W_list_i):
@@ -793,8 +904,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       #print temp2 #####
       temp22 = 10.0**10 * tpdf.T * (CRP_CT*CRP_ITC.T).T #####
       #temp2 = temp22
-      print temp22 #####
-      print "--------------------" #####
+      ###print temp22 #####
+      ###print "--------------------" #####
       
       St_prob = np.array([1.0 for c in xrange(L+1)])
       Ft_prob = np.array([1.0 for c in xrange(L+1)])
@@ -815,10 +926,12 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
             Ft_prob[l] = np.exp(sum(np.array(theta_temp_log) * np.array(FT[cstep]))) #.prod() #要素積
           else:  #ct=lかつit=kのデータがない場合
             St_prob[l] = 1.0/(G**Bt)
-            Ft_prob[l] = 1.0/E  ##画像特徴は全次元足して１になるのでこれで良い
+            #Ft_prob[l] = 1.0/E  ##画像特徴は全次元足して１になるのでこれで良い
+            Ft_sum = np.sum(FT[cstep])
+            Ft_prob[l] = 1.0/(E**Ft_sum)  ##画像特徴は全次元足して１にならないのでこれで良くない場合もある
           
           #temp2[l] = temp2[l] * St_prob[l] * Ft_prob[l]
-      temp2 = (temp22.T * St_prob * Ft_prob).T
+      temp2 = (temp22.T * St_prob * Ft_prob).T + approx_zero
       print temp2
       
       #2次元配列を1次元配列にする
@@ -981,10 +1094,13 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
                   Ft_prob[l] = np.exp(sum(np.array(theta_temp_log) * np.array(FT[tau]))) #.prod() #要素積
                 else:  #ct=lかつit=kのデータがない場合
                   St_prob[l] = 1.0/(G**Bt)
-                  Ft_prob[l] = 1.0/E  ##画像特徴は全次元足して１になるのでこれで良い
+                  #Ft_prob[l] = 1.0/E  ##画像特徴は全次元足して１になるのでこれで良い
+                  Ft_sum = np.sum(FT[tau])
+                  Ft_prob[l] = 1.0/(E**Ft_sum)  ##画像特徴は全次元足して１にならないのでこれで良くない場合もある
+          
                 
                 #temp2[l] = temp2[l] * St_prob[l] * Ft_prob[l]
-            temp2 = (temp22.T * St_prob * Ft_prob).T
+            temp2 = (temp22.T * St_prob * Ft_prob).T + approx_zero
             print temp2
             
             ###リサンプリング
@@ -1274,49 +1390,83 @@ def multiCPU_NPYLM(taple): ###未実装 (latticelmのまま)
 
 ########################################
 if __name__ == '__main__':
-    import sys
-    import os.path
-    import time
-    import random
-    #import rospy
-    #from std_msgs.msg import String
-    from __init__ import *
-    from JuliusLattice_dec import *
-    
-    #pub = rospy.Publisher('chatter', String, queue_size=10)
-    #rospy.init_node('learn_SpCoSLAM')
-    #clocktime = float(rospy.get_time()) ##rosbagがpause中のためとってこれない
-    
-    #trialname は上位プログラム (シェルスクリプト) から送られる
-    #上位プログラムがファイル作成も行う (最初だけ) 
-    trialname = sys.argv[1]
-    print trialname
-    
-    datasetNUM = sys.argv[2] #0
-    datasetname = datasets[int(datasetNUM)]
-    print datasetname #datasetPATH
-    #print trialname
+  import sys
+  import os.path
+  import shutil
+  import time
+  import random
+  #import rospy
+  #from std_msgs.msg import String
+  from __init__ import *
+  from JuliusLattice_dec import *
+
+  #pub = rospy.Publisher('chatter', String, queue_size=10)
+  #rospy.init_node('learn_SpCoSLAM')
+  #clocktime = float(rospy.get_time()) ##rosbagがpause中のためとってこれない
+  
+  #trialname は上位プログラム (シェルスクリプト) から送られる
+  #上位プログラムがファイル作成も行う (最初だけ) 
+  trialname = sys.argv[1]
+  print trialname
+  
+  datasetNUM = sys.argv[2] #0
+  datasetname = "3LDK_" + datasets[int(datasetNUM)]
+  print "ROOM:", datasetname #datasetPATH
+  #print trialname
+
+  #datasetfoldername = datasetfolder + datasetname
+  Makedir( datafolder + trialname ) 
+  Makedir( datafolder + trialname + '/particle' ) 
+  Makedir( datafolder + trialname + '/weight' ) 
+  Makedir( datafolder + trialname + '/map' ) 
+  Makedir( datafolder + trialname + '/img' ) 
+
+  #init.pyをコピー
+  shutil.copy("./__init__.py", datafolder + trialname )
+
+  N = 60
+
+  ### loop for step
+  for step in range(1,N+1):
+    print "step:",step
     start_iter_time = time.time()
-    
-    Xp,step,m_count,CT,IT = ParticleSearcher(trialname)
-    for i in xrange(R):
-      while (0 in CT[i]) or (0 in IT[i]):
-        print "Error! 0 in CT,IT",CT,IT
-        Xp,step,m_count,CT,IT = ParticleSearcher(trialname)
-    #step = 4
-    print "step", step, "m_count", m_count
-    
-    teachingtime = []
-    for line in open( datasetfolder + datasetname + 'teaching.csv', 'r'):
-      #itemList = line[:].split(',')
-      teachingtime.append(float(line))
-    
-    clocktime = float(teachingtime[step-1]) ##
-    
+
+    #READ step 
+    #step = 0
+
     #出力ファイル名を要求
     #filename = raw_input("trialname?(folder) >")
     filename = datafolder + trialname + "/" + str(step)  ##FullPath of learning trial folder
     Makedir( filename ) #シェルスクリプトとかで先に作る?
+
+    #READ position data X    
+    Xp = ReadPositionData_SIGVerse(trialname, datasetname, step)
+
+    if (UseFT == 1):
+      #FT = ReadImageData2(trialname, datasetname, step, clocktime)
+      FT = ReadImageData_SIGVerse(trialname, datasetname, step)
+    else:
+      FT = [[0.0 for e in xrange(DimImg)] for s in xrange(step)]
+    
+    #Xp,step,m_count,CT,IT = ParticleSearcher(trialname) ###いらなくなる
+    CT,IT = ReadParticleData_SIGVerse(trialname, step)
+
+    m_count = step #0
+
+    for i in xrange(R):
+      while (0 in CT[i]) or (0 in IT[i]):
+        print "Error! 0 in CT,IT",CT,IT
+        #Xp,step,m_count,CT,IT = ParticleSearcher(trialname)
+    #step = 4
+    #print "step", step, "m_count", m_count
+
+    
+    #teachingtime = []
+    #for line in open( datasetfolder + datasetname + 'teaching.csv', 'r'):
+    #  #itemList = line[:].split(',')
+    #  teachingtime.append(float(line))
+    
+    clocktime = float(1.0) #float(teachingtime[step-1]) ##
     
     
     Julius_lattice(step,filename,trialname)    ##音声認識、ラティス形式出力、opemFST形式へ変換###########
@@ -1327,15 +1477,14 @@ if __name__ == '__main__':
     print "Julius complete!"
     
     p_weight_log = np.array([0.0 for i in xrange(R)])
-    p_weight = np.array([0.0 for i in xrange(R)])
-    p_WS_log = np.array([0.0 for i in xrange(R)]) ###
-    W_list   = [[] for i in xrange(R)]
-    ST_seq   = [[] for i in xrange(R)]
+    p_weight     = np.array([0.0 for i in xrange(R)])
+    p_WS_log     = np.array([0.0 for i in xrange(R)]) ###
+    W_list       = [[] for i in xrange(R)]
+    ST_seq       = [[] for i in xrange(R)]
+    CT_NEW = CT  ### For SIGVerse
+    IT_NEW = IT  ### For SIGVerse
     
-    if (UseFT == 1):
-      FT = ReadImageData2(trialname, datasetname, step, clocktime)
-    else:
-      FT = [[0 for e in xrange(DimImg)] for s in xrange(step)]
+
     
     p = Pool(multiCPU) #max(int(multiprocessing.cpu_count()/2)-1,2) )
     taple = [(filename,i) for i in xrange(R)]
@@ -1343,49 +1492,21 @@ if __name__ == '__main__':
     
     #パーティクルごとに計算
     for i in xrange(R):
-      #print "--------------------------------------------------"
-      #print "Particle:",i
-      
-      """
-      if (ramdoman != 0):
-        annealsteps  += random.randint(-1*annealsteps+1,ramdoman)
-        anneallength += random.randint(-1*anneallength+1,ramdoman)
-      
-      #print "latticelm run. sample_num:" + str(sample)
-      latticelm_CMD = "latticelm -input fst -filelist "+ filename + "/fst_gmm/fstlist.txt -prefix " + filename + "/out_gmm/" + str(i) + "_ -symbolfile " + filename + "/fst_gmm/isyms.txt -burnin " + str(burnin) + " -samps " + str(samps) + " -samprate " + str(samprate) + " -knownn " + str(knownn) + " -unkn " + str(unkn) + " -annealsteps " + str(annealsteps) + " -anneallength " + str(anneallength)
-      
-      p = os.popen( latticelm_CMD )   ##latticelm ###################
-      #time.sleep(1.0) #sleep(秒指定)###################
-      p.close()###########################
-      latticelm_count = 0
-      while (os.path.exists(filename + "/out_gmm/" + str(i) + "_samp."+str(samps) ) != True):
-              print filename + "/out_gmm/" + str(i) + "_samp."+str(samps),"wait(10s)... or ERROR?"
-              #p.close()
-              latticelm_count += 1
-              if (latticelm_count > 10):
-                print "run latticelm again."
-                p = os.popen( latticelm_CMD )   ##latticelm 
-                p.close()
-                latticelm_count = 0
-              time.sleep(1.0) #sleep(秒指定)
-      #p.close()###########################
-      print "Particle:",i," latticelm complete!"
-      """
-      
-      #for i in xrange(R): ###############
       print "--------------------------------------------------" ###############
       print "Particle:",i ###############
       
       W_list[i], ST, ST_seq[i] = ReadWordData(step, trialname, i)
       print "Read word data."
       #CT, IT = ReaditCtData(trialname, step, i)
-      print "Read Ct,it data."
+      #print "Read Ct,it data."
       print "CT",CT[i]
       print "IT",IT[i]
-      ct, it, p_weight_log[i],p_WS_log[i] = Learning(step, filename, i, Xp[i], ST, W_list[i], CT[i], IT[i], FT)     ##場所概念の学習
+      ct, it, p_weight_log[i],p_WS_log[i] = Learning(step, filename, i, Xp, ST, W_list[i], CT[i], IT[i], FT)     ##場所概念の学習
       print "Particle:",i," Learning complete!"
+      CT_NEW[i] += [ct] ### For SIGVerse
+      IT_NEW[i] += [it] ### For SIGVerse
       
-      WriteParticleData(filename, step, i, Xp[i], p_weight_log[i], ct, it, CT[i], IT[i])  #重みは正規化されてない値が入る
+      WriteParticleData(filename, step, i, Xp, p_weight_log[i], ct, it, CT[i], IT[i])  #重みは正規化されてない値が入る
       WriteWordData(filename, i, W_list[i])
       
       print "Write particle data and word data."
@@ -1400,10 +1521,26 @@ if __name__ == '__main__':
     
     #print p_weight_log
     #weightの正規化
-    p_weight = np.exp(p_weight_log)
+    p_weight = np.exp(p_weight_log) + approx_zero
     sum_weight = np.sum(p_weight)
     p_weight = p_weight / sum_weight
     print "Weight:",p_weight
+
+    #########################################################################
+    ### For SIGVerse: パーティクル集合の再構成 ###
+    particles_Current = [ (CT_NEW[r],IT_NEW[r]) for r in range(R) ]
+    particles_index   = [i for i in range(R)]
+    
+    ### For SIGVerse: リサンプリング ###
+    particles_index_NEW = np.random.choice(a=particles_index, size=R, p=p_weight)
+    particles_NEW = [particles_Current[particles_index_NEW[i]] for i in range(R)]
+    # random.choices(particles_Current, k=R, weights=p_weight)
+    #p_weight = np.array([1.0/R for i in xrange(R)]) #後の処理で元の重みの値が必要
+
+    ### For SIGVerse: リサンプリングされたパーティクル集合の保存 ###
+    WriteParticleData_SIGVerse(filename, step, particles_NEW)
+
+    #########################################################################
     
     #########################################################################
     #logの最大値を引く処理
@@ -1526,6 +1663,7 @@ if __name__ == '__main__':
     #endflag = "1"
     #pub.publish(endflag)
     
+    """
     flag = 0
     fp = open( datafolder + trialname + "/teachingflag.txt", 'w')
     fp.write(str(flag))
@@ -1534,7 +1672,8 @@ if __name__ == '__main__':
     fp = open( datafolder + trialname + "/gwaitflag.txt", 'w')
     fp.write(str(m_count+1))
     fp.close()
-    
+    """
+
     end_iter_time = time.time()
     iteration_time = end_iter_time - start_iter_time
     fp = open( datafolder + trialname + "/time_step.txt", 'a')

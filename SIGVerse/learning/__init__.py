@@ -1,17 +1,17 @@
 #coding:utf-8
 #This file for setting parameters
-#Akira Taniguchi 2017/01/18-2018/02/11-2018/12/22-
+#Akira Taniguchi 2017/01/18-2018/02/11-2018/12/22-2019/10/01-
 import numpy as np
 
 ####################Parameters####################
-R = 30               #The number of particles in spatial concept learning (Same to value in run_gmapping.sh)
+R = 10               #The number of particles in spatial concept learning 
                      #(It's need to set to the same value in launch file of gmapping: no setting=30)
 dimx = 2             #The number of dimensions of xt (x,y)
 
 ##Initial (hyper) parameters
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
-alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
-gamma0 = 0.1         #Hyperparameter of CRP in multinomial distribution for index of position distribution
+alpha0 = 10.0 #0.01        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
+gamma0 = 1.0 #0.01         #Hyperparameter of CRP in multinomial distribution for index of position distribution
 beta0 = 0.1          #Hyperparameter in multinomial distribution P(W) for place names 
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
 k0 = 1e-3            #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
@@ -20,10 +20,11 @@ V0 = np.eye(dimx)*2  #Hyperparameter in Inverse Wishart distribution P(Σ) (prio
 n0 = 3.0             #Hyperparameter in Inverse Wishart distribution P(Σ) {>the number of dimenssions] (Influence degree of prior distribution of Σ)
 k0m0m0 = k0*np.dot(np.array([m0]).T,np.array([m0]))
 
+approx_zero = 10.0**(-200)   #approximated value of log(0)
 
 #Parameters of latticelm (Please see web page of latticelm)
-knownn = 3#2           #n-gram length for langage model (word n-gram: 3)
-unkn   = 3#2           #n-gram length for spelling model (unknown word n-gram: 3)
+knownn = 3#2           #言語モデルのn-gram長 (3)
+unkn   = 3#2           #綴りモデルのn-gram長 (3)
 annealsteps  = 10#3    #焼き鈍し法のステップ数 (3)
 anneallength = 15#5    #各焼き鈍しステップのイタレーション数 (5)
 burnin   = 100 #10     #burn-inのイタレーション数 (20)
@@ -34,24 +35,28 @@ ramdoman = 0 #5        #焼きなましパラメータをランダムにする (
 #SpCoSLAM 2.0 追加要素
 wic = 1             #1:wic重みつき、0:wic重みなし
 LAG = 10            #固定ラグ活性化のラグ値(it,ct) (LAG>=1; SpCoSLAM1.0:1)
-LMLAG = 10          #LAG #固定ラグ活性化のラグ値(St) (LMLAG>=1), 固定ラグ活性化しない (LMLAG==0) 
+LMLAG = 0          #LAG #固定ラグ活性化のラグ値(St) (LMLAG>=1), 固定ラグ活性化しない (LMLAG==0) 
 tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１) 、ラグ値前の言語モデルで音声認識 (0) 
-LMtype = "lattice"  #latticelm:"lattice", lattice→learn→NPYLM:lattice_learn_NPYLM
-LMweight = "WS"     #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
+LMtype = "lattice_learn_NPYLM"  #latticelm:"lattice", lattice→learn→NPYLM:lattice_learn_NPYLM
+LMweight = "WS" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
 
 ####################Option setting (NOT USE)####################
 UseFT = 1       #画像特徴を使う場合 (１) 、使わない場合 (０) 
 UseLM = 1       #言語モデルを更新する場合 (１) 、しない場合 (０) 
 
-CNNmode = 5     #CNN最終層1000次元(1)、CNN中間層4096次元(2)、PlaceCNN最終層205次元(3)、SIFT(0)
+CNNmode = 1 #5     #CNN最終層1000次元(1)、CNN中間層4096次元(2)、PlaceCNN最終層205次元(3)、SIFT(0)
+Feture_times = 1   #画像特徴量を何倍するか
+Feture_sum_1 = 1   #画像特徴量を足して１になるようにする(1)
+Feture_noize = 10**(-5) #画像特徴量に微小ノイズを足す(Feture_noize/DimImg)
 
 if CNNmode == 0:
   Descriptor = "SIFT_BoF"
   DimImg = 100  #Dimension of image feature
 elif CNNmode == 1:
-  Descriptor = "CNN_softmax"
+  Descriptor = "googlenet_prob_AURO" #"CNN_softmax"
   DimImg = 1000 #Dimension of image feature
+  Feture_times = float(Feture_times)/100.0 #googlenet_probのデータはすでに１００倍されている
 elif CNNmode == 2:
   Descriptor = "CNN_fc6"
   DimImg = 4096 #Dimension of image feature
@@ -88,7 +93,7 @@ else:
 multiCPU = 1 #2  #max(int(multiprocessing.cpu_count()/2)-1,2) )
 
 ##rosbag data playing speed (normal = 1.0)
-rosbagSpeed = 1.0 #0.5#2
+#rosbagSpeed = 1.0 #0.5#2
 
 #latticelm or NPYLM (run SpCoSLAM_NPYLM.sh)
 #latticeLM = 1     #latticelm(1), NPYLM(0)
@@ -98,19 +103,29 @@ NbestNum = 10 #The number of N of N-best (n<=10)
 #Setting of PATH for output folder
 #パスはUbuntu使用時とWin使用時で変更する必要がある。特にUbuntuで動かすときは絶対パスになっているか要確認。
 #win:相対パス、ubuntu:絶対パス
-datafolder   = "/mnt/hgfs/D/Dropbox/SpCoSLAM/data/"        #PATH of data out put folder
 
-speech_folder = "/home/akira/Dropbox/Julius/directory/SpCoSLAM/*.wav" #*.wav" #音声の教示データフォルダ(Ubuntu full path)
-speech_folder_go = "/home/akira/Dropbox/Julius/directory/SpCoSLAMgo/*.wav" #*.wav" #評価用の音声データフォルダ(Ubuntu full path)
+##### NEW #####
+inputfolder_SIG  = "/mnt/hgfs/D/Dropbox/SpCoNavi/CoRL/dataset/similar/3LDK_small/"  #"/home/akira/Dropbox/SpCoNavi/data/"
+outputfolder_SIG = "/mnt/hgfs/D/Dropbox/SpCoSLAM/SIGVerse/data/"  #"/home/akira/Dropbox/SpCoNavi/data/"
+# akira/Dropbox/SpCoNavi/CoRL/dataset/similar/3LDK_small/3LDK_01/
+
+datafolder   = outputfolder_SIG #"/mnt/hgfs/D/Dropbox/SpCoSLAM/data/"        #PATH of data out put folder
+datafolder_evaluation   = "/mnt/hgfs/D/Dropbox/SpCoSLAM/SIGVerse/data2/"
+#"/home/akira/Dropbox/SpCoSLAM/data/" #"./../datadump/" 
+# "/mnt/hgfs/D/akira/Dropbox/SpCoSLAM/data/" 
+
+speech_folder = inputfolder_SIG + "speech/*.wav" #"/home/akira/Dropbox/Julius/directory/SpCoSLAM/*.wav" #*.wav" #音声の教示データフォルダ(Ubuntu full path)
+#speech_folder_go = "/home/akira/Dropbox/Julius/directory/SpCoSLAMgo/*.wav" #*.wav" #評価用の音声データフォルダ(Ubuntu full path)
 lmfolder = "/home/akira/Dropbox/SpCoSLAM/learning/lang_m/"
 
 #Folder of training data set (rosbag file)
-datasetfolder = "/home/akira/Dropbox/SpCoSLAM/rosbag/"   #training data set folder
-dataset1      = "albert-b-laser-vision/albert-B-laser-vision-dataset/"
-bag1          = "albertBimg.bag"  #Name of rosbag file
-datasets      = [dataset1] #[dataset1,dataset2]
-bags          = [bag1] #run_rosbag.pyにて使用
-scantopic     = ["scan"] #, "base_scan _odom_frame:=odom_combined"]
+datasetfolder = inputfolder_SIG #"/home/akira/Dropbox/SpCoSLAM/rosbag/"   #training data set folder
+#dataset1      = "albert-b-laser-vision/albert-B-laser-vision-dataset/"
+#bag1          = "albertBimg.bag"  #Name of rosbag file
+datasets      = ["00","01","04","05","06","09","02","03","07","08","10"] #[dataset1,dataset2]
+#bags          = [bag1] #run_rosbag.pyにて使用
+#scantopic     = ["scan"] #, "base_scan _odom_frame:=odom_combined"]
+data_step_num = 60
 
 #dataset2      = "MIT_Stata_Center_Data_Set/"   ##用意できてない
 #datasets      = {"albert":dataset1,"MIT":dataset2}
@@ -120,7 +135,7 @@ scantopic     = ["scan"] #, "base_scan _odom_frame:=odom_combined"]
 correct_Ct = 'Ct_correct.csv'          #データごとの正解のCt番号
 correct_It = 'It_correct.csv'          #データごとの正解のIt番号
 correct_data = 'SpCoSLAM_human.csv'    #データごとの正解の文章 (単語列、区切り文字つき) (./data/)
-correct_data_SEG = 'SpCoSLAM_SEG.csv'  #データごとの正解の文章 (単語列、区切り文字つき) (./data/)
+#correct_data_SEG = 'SpCoSLAM_SEG.csv'  #データごとの正解の文章 (単語列、区切り文字つき) (./data/)
 correct_name = 'name_correct.csv'      #データごとの正解の場所の名前 (音素列) 
 
 N_best_number = 10  #The number of N of N-best for PRR evaluation (PRR評価用のN-bestのN)
