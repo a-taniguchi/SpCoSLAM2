@@ -1,12 +1,16 @@
 # SpCoSLAM 2.0
 
 Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
-This repository includes the source codes used for the experiments in our paper.  
+This repository includes the source codes used for the experiments in our paper [1].  
+The source codes contains the original algorithm of SpCoSLAM [2].  
 
 【Other repositories】  
  [SpCoSLAM_Lets](https://github.com/EmergentSystemLabStudent/SpCoSLAM_Lets): Wrapper of SpCoSLAM for mobile robots (Recommended)  
  [SpCoSLAM](https://github.com/a-taniguchi/SpCoSLAM): Implementation of SpCoSLAM (Online Spatial Concept and Lexical Acquisition with Simultaneous Localization and Mapping)   
  [SpCoSLAM_evaluation](https://github.com/a-taniguchi/SpCoSLAM_evaluation): The codes for the evaluation or the visualization in our paper  
+
+## Abstract of SpCoSLAM
+We propose an online learning algorithm based on a Rao-Blackwellized particle filter for spatial concept acquisition and mapping. We have proposed a nonparametric Bayesian spatial concept acquisition model (SpCoA). We propose a novel method (SpCoSLAM) integrating SpCoA and FastSLAM in the theoretical framework of the Bayesian generative model. The proposed method can simultaneously learn place categories and lexicons while incrementally generating an environmental map.   
 
 ## Abstract of SpCoSLAM 2.0
 We propose a novel online learning algorithm, called SpCoSLAM 2.0, for spatial concepts and lexical acquisition with high accuracy and scalability. Previously, we proposed SpCoSLAM as an online learning algorithm based on unsupervised Bayesian probabilistic model that integrates multimodal place categorization, lexical acquisition, and SLAM. However, our previous algorithm had limited estimation accuracy owing to the influence of the early stages of learning, and increased computational complexity with added training data. Therefore, we introduce techniques such as fixed-lag rejuvenation to reduce the calculation time while maintaining an accuracy higher than that of the previous algorithm. The results show that, in terms of estimation accuracy, the proposed algorithm exceeds the previous algorithm and is comparable to batch learning. In addition, the calculation time of the proposed algorithm does not depend on the amount of training data and becomes constant for each step of the scalable algorithm. Our approach will contribute to the realization of long-term spatial language interactions between humans and robots.  
@@ -23,7 +27,7 @@ Figure: The graphical model of SpCoSLAM
 - Speech recognition system: Julius dictation-kit-v4.4 GMM-HMM/DNN-HMM (Using Japanese syllabary dictionary, lattice output)  
 - If you perform the lexical acquisition (unsupervised word segmentaiton): [latticelm 0.4](http://www.phontron.com/latticelm/) and OpenFST  
 
-In our paper of IROS2018, we used a rosbag file of open-dataset [albert-B-laser-vision-dataset](https://dspace.mit.edu/handle/1721.1/62291).
+In our paper, we used a rosbag file of open-dataset [albert-B-laser-vision-dataset](https://dspace.mit.edu/handle/1721.1/62291).
 
 ## 【Preparation for execution】  
 - Path specification of training dataset, matching ros topic name etc (`__init__.py` and `run_gmapping.sh`)
@@ -53,18 +57,21 @@ In our paper of IROS2018, we used a rosbag file of open-dataset [albert-B-laser-
 ---
 If you use this program to publish something, please describe the following citation information.
 
-Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", arXiv:1803.03481. (Preprint submitted)  
+[1] Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", arXiv:1803.03481. (Preprint submitted)  
+[2] Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "Online Spatial Concept and Lexical Acquisition with Simultaneous Localization and Mapping", IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2017.
 
-Original paper:  
-https://arxiv.org/abs/1803.03481  
+Link of papers:  
+[1] https://arxiv.org/abs/1803.03481  
+[2] https://arxiv.org/abs/1704.04664
 
 
-Sample video:  
-https://youtu.be/TN081g15G84  
+Sample video (Ver. IROS2017): https://youtu.be/z73iqwKL-Qk
+
+Sample videos (Ver. 2.0):  
+https://youtu.be/H5yztfmxGbc  
 https://youtu.be/_6S-mNtjn44  
 
+
 2018/05/19  Akira Taniguchi  
-2018/11/22  Akira Taniguchi (update)  
-2018/12/23  Akira Taniguchi (update)  
 2019/01/08  Akira Taniguchi (update)  
 
