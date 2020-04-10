@@ -1,12 +1,13 @@
 # SpCoSLAM 2.0
 
+SpCoSLAM: Online Spatial Concept and Lexical Acquisition with Simultaneous Localization and Mapping  
 Implementation of SpCoSLAM 2.0 (An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping)  
 This repository includes the source codes used for the experiments in our paper [1].  
 The source codes contains the original algorithm of SpCoSLAM [2].  
 
-【Other repositories】  
- [SpCoSLAM_Lets](https://github.com/EmergentSystemLabStudent/SpCoSLAM_Lets): Wrapper of SpCoSLAM for mobile robots (Recommended)  
- [SpCoSLAM](https://github.com/a-taniguchi/SpCoSLAM): Implementation of SpCoSLAM (Online Spatial Concept and Lexical Acquisition with Simultaneous Localization and Mapping)   
+## Other repositories  
+ [SpCoSLAM_Lets](https://github.com/EmergentSystemLabStudent/SpCoSLAM_Lets): ROS Wrapper of SpCoSLAM for real mobile robots  
+ [SpCoSLAM](https://github.com/a-taniguchi/SpCoSLAM): Implementation of SpCoSLAM (Old version)   
  [SpCoSLAM_evaluation](https://github.com/a-taniguchi/SpCoSLAM_evaluation): The codes for the evaluation or the visualization in our paper  
 
 ## Abstract of SpCoSLAM
@@ -19,7 +20,8 @@ Figure: The graphical model of SpCoSLAM
 <img src="https://github.com/a-taniguchi/SpCoSLAM/blob/master/img/graphicalmodel02.jpg" width="520px">
 
 
-## 【Execution environment】  
+## Execution environment
+A new version will probably be available.  
 - Ubuntu 14.04  
 - Python 2.7.6  
 - ROS indigo  
@@ -29,7 +31,7 @@ Figure: The graphical model of SpCoSLAM
 
 In our paper, we used a rosbag file of open-dataset [albert-B-laser-vision-dataset](https://dspace.mit.edu/handle/1721.1/62291).
 
-## 【Preparation for execution】  
+## Preparation for execution  
 - Path specification of training dataset, matching ros topic name etc (`__init__.py` and `run_gmapping.sh`)
 - Create a file that stores the teaching time from the time information of the training dataset
 - Prepare speech data files. Specify the file path in `__init__.py`  
@@ -40,12 +42,12 @@ In our paper, we used a rosbag file of open-dataset [albert-B-laser-vision-datas
   We changed this file only.  
   [Note] If the original `gmapping` has already been installed on your PC, you need to change the uninstallation or path setting of `gmapping`.
 
-## 【Execution procedure】
+## Execution procedure
 `cd ~/SpCoSLAM2-master/learning `  
 `./SpCoSLAM2.0.sh `  
 `->trialname?(output_folder) >*output_folder_name* `  
 
-## 【Notes】
+## Notes
 - Sometimes `gflag`-related errors sometimes appear in `run_rosbag.py`. 
   It is due to file reading failure. 
   It will reload and it will work so it will not be a problem.
@@ -55,23 +57,21 @@ In our paper, we used a rosbag file of open-dataset [albert-B-laser-vision-datas
   The following files of `./catkin_ws/src/` folder follow the license of the original version of gmapping (License: CreativeCommons-by-nc-sa-2.0).
 
 ---
+## Reference
 If you use this program to publish something, please describe the following citation information.
 
-[1] Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", arXiv:1803.03481. (Preprint submitted)  
-[2] Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "Online Spatial Concept and Lexical Acquisition with Simultaneous Localization and Mapping", IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2017.
+[1] Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "An Improved and Scalable Online Learning of Spatial Concepts and Language Models with Mapping", Autonomous Robots, Feb. 2020. (Open Access) [[LINK]](https://link.springer.com/article/10.1007/s10514-020-09905-0) [[arXiv]](https://arxiv.org/abs/1803.03481)  
+[2] Akira Taniguchi, Yoshinobu Hagiwara, Tadahiro Taniguchi, and Tetsunari Inamura, "Online Spatial Concept and Lexical Acquisition with Simultaneous Localization and Mapping", IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2017. [[LINK]](http://ieeexplore.ieee.org/document/8202243/) [[arXiv]](https://arxiv.org/abs/1704.04664)  
 
-Link of papers:  
-[1] https://arxiv.org/abs/1803.03481  
-[2] https://arxiv.org/abs/1704.04664
-
-
-Sample video (Ver. IROS2017): https://youtu.be/z73iqwKL-Qk
-
-Sample videos (Ver. 2.0):  
-https://youtu.be/H5yztfmxGbc  
-https://youtu.be/_6S-mNtjn44  
+Sample videos:  
+[Ver. SpCoSLAM(IROS2017)]  
+ - https://youtu.be/z73iqwKL-Qk  
+ 
+[Ver. SpCoSLAM 2.0]   
+ - https://youtu.be/H5yztfmxGbc  
+ - https://youtu.be/_6S-mNtjn44  
 
 
 2018/05/19  Akira Taniguchi  
-2019/01/08  Akira Taniguchi (update)  
+2020/04/10  Akira Taniguchi (update)  
 
