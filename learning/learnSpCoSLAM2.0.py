@@ -501,7 +501,7 @@ def SaveParameters(filename, particle, phi, pi, W, theta, mu, sig):
   
   fp5 = open(filename + "/mu" + str(particle) + ".csv", 'w')
   for k in xrange(len(mu)):
-      for dim in xrange(len(mu[k])):
+      for dim in xrange(dimx):
         fp5.write(repr(mu[k][dim])+',')
       fp5.write('\n')
   fp5.close()
@@ -572,7 +572,6 @@ def WordDictionaryUpdate(step, filename, W_list):
                 #print len(W_list_sj),moji
               for j in xrange(len(TANGO)):
                 if (len(W_list_sj) > moji) and (flag_moji == 0):
-                  #else:
                   if (unicode(TANGO[j][0], encoding='shift_jis') == W_list_sj[moji]):
                       ###print moji,j,TANGO[j][0]
                       hatsuon[c] = hatsuon[c] + TANGO[j][1]
@@ -648,6 +647,7 @@ def WordDictionaryUpdate(step, filename, W_list):
 
 # Online Learning for Spatial Concepts of one particle
 def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
+    XT_list = [ np.array([XT[s].x, XT[s].y]) for s in range(step) ]
     np.random.seed()
     ########################################################################
     ####                   　    ↓Learning phase↓                       ####
@@ -681,7 +681,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       theta = [(np.array(Nle_c[0]) + chi0 ) / (sum(Nle_c[0]) + E*chi0)] #[thetac_temp[0]]
       
       #nk = 1
-      kN,mN,nN,VN = PosteriorParameterGIW(1,1,1,[0],[XT[0]],0)
+      kN,mN,nN,VN = PosteriorParameterGIW(1,1,1,[0],XT_list[0],0)
       """
       xk = [np.array([XT[0].x, XT[0].y])]
       m_ML = sum(xk) #/ float(nk) #fsumではダメ
@@ -738,7 +738,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       #CRP_ITC = np.array( [np.array([icclist2[c][i] for i in xrange(K)] + [gamma0]) / (cclist[c] + gamma0) for c in xrange(L)] + [np.array([0.0 for i in xrange(K)] + [1.0])] )
       
       #print Xp
-      xt = np.array([XT[cstep].x, XT[cstep].y])
+      xt = XT_list[cstep] #np.array([XT[cstep].x, XT[cstep].y])
       tpdf = np.array([1.0 for i in xrange(K+1)])
       
       for k in xrange(K+1):
@@ -746,36 +746,11 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
         #事後t分布用のパラメータ計算
         if (k == K):  #k is newの場合
           nk = 0
-          kN,mN,nN,VN = PosteriorParameterGIW(k,nk,step-1,IT,XT,0)
+          kN,mN,nN,VN = PosteriorParameterGIW2(k,nk,step-1,IT,XT_list,0)
         else:
           nk = ic[icitems[k][0]]  #icitems[k][1]
-          kN,mN,nN,VN = PosteriorParameterGIW(k,nk,step-1,IT,XT,icitems[k][0])
+          kN,mN,nN,VN = PosteriorParameterGIW2(k,nk,step-1,IT,XT_list,icitems[k][0])
         
-        """
-        ###kについて、zaが同じものを集める
-        if nk != 0 :  #もしzaの中にkがあれば(計算短縮処理)        ##0ワリ回避
-            xk = []
-            for s in xrange(step-1) : 
-              if IT[s] == icitems[k][0] : 
-                xk = xk + [ np.array([XT[s].x, XT[s].y]) ]
-            m_ML = sum(xk) / float(nk) #fsumではダメ
-            print "K%d n:%d m_ML:%s" % (k,nk,str(m_ML))
-            
-            ##ハイパーパラメータ更新
-            kN = k0 + nk
-            mN = ( k0*m0 + nk*m_ML ) / kN  #dim 次元横ベクトル
-            nN = n0 + nk
-            #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in xrange(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
-            VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in xrange(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
-            VN = Check_VN(VN)
-            
-        else:  #データがないとき
-            kN = k0
-            mN = m0
-            nN = n0
-            VN = V0
-            
-        """
         #t分布の事後パラメータ計算
         mk = mN
         dofk = nN - dimx + 1
@@ -929,7 +904,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
             CRP_CT  = np.array(cclist + [alpha0]) / (Nct + alpha0)
             CRP_ITC = np.array([ np.array([ (icclist[c][i]*(icclist[c][i] != 0) + gamma0*(icclist[c][i] == 0)) for i in xrange(K)] + [gamma0]) / (cclist[c] + gamma0) for c in xrange(L) ] + [ np.array([0.0 for i in xrange(K)] + [1.0]) ])
             
-            xt = np.array([XT[tau].x, XT[tau].y])
+            xt = XT_list[tau] #np.array([XT[tau].x, XT[tau].y])
             tpdf = np.array([1.0 for i in xrange(K+1)])
             
             for k in xrange(K+1):
@@ -937,10 +912,10 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
               #事後t分布用のパラメータ計算
               if (k == K):  #k is newの場合
                 nk = 0
-                kN,mN,nN,VN = PosteriorParameterGIW(k,nk,step,IT,XT,0)
+                kN,mN,nN,VN = PosteriorParameterGIW2(k,nk,step,IT,XT_list,0)
               else:
                 nk = ic[icitems[k][0]]  #icitems[k][1]
-                kN,mN,nN,VN = PosteriorParameterGIW(k,nk,step,IT,XT,icitems[k][0])
+                kN,mN,nN,VN = PosteriorParameterGIW2(k,nk,step,IT,XT_list,icitems[k][0])
               
               #t分布の事後パラメータ計算
               mk = mN
@@ -1084,31 +1059,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
         #  #print icitems[k][0], ic[icitems[k][0]]
         #print k,nk
         
-        kN,mN,nN,VN = PosteriorParameterGIW(k,nk,step,IT,XT,icitems[k][0])
-        """
-        if (nk != 0):  #0にはならないはずだが一応
-          xk= []
-          for s in xrange(step):
-            if IT[s] == icitems[k][0]:
-              xk = xk + [ np.array([XT[s].x, XT[s].y]) ]
-          #IT_step = I #本来はI==kのカテゴリだけ値を更新すればよい
-          #if (IT_step == k):
-          #    xk = xk + [ np.array([XT[cstep].x, XT[cstep].y]) ]
-          
-          m_ML = sum(xk) / float(nk) #fsumではダメ
-          ##ハイパーパラメータ更新
-          kN = k0 + nk
-          mN = ( k0*m0 + nk*m_ML ) / kN  #dim 次元横ベクトル
-          nN = n0 + nk
-          VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in xrange(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
-          VN = Check_VN(VN)
-        else:
-          print "Error. nk["+str(k)+"]="+str(nk)
-          kN = k0
-          mN = m0
-          nN = n0
-          VN = V0
-        """
+        kN,mN,nN,VN = PosteriorParameterGIW2(k,nk,step,IT,XT_list,icitems[k][0])
+
         mNp[k] = mN
         nNp[k] = nN
         VNp[k] = VN
@@ -1303,7 +1255,7 @@ if __name__ == '__main__':
       while (0 in CT[i]) or (0 in IT[i]):
         print "Error! 0 in CT,IT",CT,IT
         Xp,step,m_count,CT,IT = ParticleSearcher(trialname)
-    #step = 4
+    
     print "step", step, "m_count", m_count
     
     teachingtime = []
@@ -1313,11 +1265,10 @@ if __name__ == '__main__':
     
     clocktime = float(teachingtime[step-1]) ##
     
-    #出力ファイル名を要求
+    # Request output file name
     #filename = raw_input("trialname?(folder) >")
     filename = datafolder + trialname + "/" + str(step)  ##FullPath of learning trial folder
-    Makedir( filename ) #シェルスクリプトとかで先に作る?
-    
+    Makedir( filename ) 
     
     Julius_lattice(step,filename,trialname)    ##音声認識、ラティス形式出力、opemFST形式へ変換###########
     while (os.path.exists(filename + "/fst_gmm/" + str(step-1).zfill(3) +".fst" ) != True):
@@ -1382,7 +1333,7 @@ if __name__ == '__main__':
       print "Read Ct,it data."
       print "CT",CT[i]
       print "IT",IT[i]
-      ct, it, p_weight_log[i],p_WS_log[i] = Learning(step, filename, i, Xp[i], ST, W_list[i], CT[i], IT[i], FT)     ##場所概念の学習
+      ct, it, p_weight_log[i],p_WS_log[i] = Learning(step, filename, i, Xp, ST, W_list[i], CT[i], IT[i], FT)     ## Learning of spatial concepts
       print "Particle:",i," Learning complete!"
       
       WriteParticleData(filename, step, i, Xp[i], p_weight_log[i], ct, it, CT[i], IT[i])  #重みは正規化されてない値が入る
@@ -1441,7 +1392,7 @@ if __name__ == '__main__':
       W_list_particle = []
       ST_seq = ST_seq[MAX_LM_particle]
       ##事前処理 (音節の間に空白を挿入) 
-      if (tyokuzen == 1) and (tyokuzenNPYLM == 1) and (LMLAG != 0) and (step-LMLAG >= 1):
+      if (tyokuzen == 1) and (LMLAG != 0) and (step-LMLAG >= 1): # and (tyokuzenNPYLM == 1) これがあってもエラーなく動いていた？？（tyokuzenNPYLMが未定義）
         ST_seq_step_LMLAG = ST_seq[MAX_LM_particle][0:step-LMLAG]
         ST_seq = ST_seq[step-LMLAG:step] #[ [ST_seq[n][j] for j in xrange(len(ST_seq[n]))] for n in xrange(step-LMLAG, len(ST_seq))]
 

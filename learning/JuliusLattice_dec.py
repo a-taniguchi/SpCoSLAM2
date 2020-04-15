@@ -9,7 +9,7 @@ import codecs
 import os
 import re
 import sys
-from math import exp,log
+from math import exp #,log
 from __init__ import *
 
 if(tyokuzen == 1):

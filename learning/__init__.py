@@ -37,7 +37,7 @@ LAG = 10            #固定ラグ活性化のラグ値(it,ct) (LAG>=1; SpCoSLAM1
 LMLAG = 10          #LAG #固定ラグ活性化のラグ値(St) (LMLAG>=1), 固定ラグ活性化しない (LMLAG==0) 
 tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１) 、ラグ値前の言語モデルで音声認識 (0) 
 LMtype = "lattice"  #latticelm:"lattice", lattice→learn→NPYLM:lattice_learn_NPYLM
-LMweight = "WS"     #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
+LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
 
 ####################Option setting (NOT USE)####################
@@ -99,6 +99,8 @@ NbestNum = 10 #The number of N of N-best (n<=10)
 #パスはUbuntu使用時とWin使用時で変更する必要がある。特にUbuntuで動かすときは絶対パスになっているか要確認。
 #win:相対パス、ubuntu:絶対パス
 datafolder   = "/mnt/hgfs/D/Dropbox/SpCoSLAM/data/"        #PATH of data out put folder
+#"/home/akira/Dropbox/SpCoSLAM/data/" #"./../datadump/" 
+# "/mnt/hgfs/D/akira/Dropbox/SpCoSLAM/data/" 
 
 speech_folder = "/home/akira/Dropbox/Julius/directory/SpCoSLAM/*.wav" #*.wav" #音声の教示データフォルダ(Ubuntu full path)
 speech_folder_go = "/home/akira/Dropbox/Julius/directory/SpCoSLAMgo/*.wav" #*.wav" #評価用の音声データフォルダ(Ubuntu full path)
@@ -123,8 +125,8 @@ correct_data = 'SpCoSLAM_human.csv'    #データごとの正解の文章 (単�
 correct_data_SEG = 'SpCoSLAM_SEG.csv'  #データごとの正解の文章 (単語列、区切り文字つき) (./data/)
 correct_name = 'name_correct.csv'      #データごとの正解の場所の名前 (音素列) 
 
-N_best_number = 10  #The number of N of N-best for PRR evaluation (PRR評価用のN-bestのN)
-margin = 10*0.05    # 地図のグリッドと位置の値の関係が不明のため(0.05m/grid)*margin(grid)=0.05*margin(m)
+N_best_number = 10  # The number of N of N-best for PRR evaluation (PRR評価用のN-bestのN)
+margin = 10*0.05    # margin value for place area in gird map (0.05m/grid)*margin(grid)=0.05*margin(m)
 
 ####################Particle Class (structure)####################
 class Particle:

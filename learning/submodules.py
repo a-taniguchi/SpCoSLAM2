@@ -73,10 +73,10 @@ def Check_VN(VN):
     VN = V0
   return VN
 
-# ガウス-逆ウィシャート分布(NIW)の事後分布のパラメータ推定の計算
+# ガウス-逆ウィシャート分布(NIW)の事後分布のパラメータ推定の計算 (XTがParticleの構造体クラス)
 def PosteriorParameterGIW(k,nk,step,IT,XT,icitems_k0):
   ###kについて、ITが同じものを集める
-  if nk != 0 :  #もしzaの中にkがあれば(計算短縮処理)        ##0ワリ回避
+  if nk != 0 :  #もしITの中にkがあれば(計算短縮処理)        ##0ワリ回避
     xk = []
     for s in xrange(step) : 
       if IT[s] == icitems_k0 : 
@@ -100,6 +100,35 @@ def PosteriorParameterGIW(k,nk,step,IT,XT,icitems_k0):
     VN = V0
   
   return kN,mN,nN,VN
+
+# ガウス-逆ウィシャート分布(NIW)の事後分布のパラメータ推定の計算 (XTがnp.arrayのlist)
+def PosteriorParameterGIW2(k,nk,step,IT,XT,icitems_k0):
+  ###kについて、ITが同じものを集める
+  if nk != 0 :  #もしITの中にkがあれば(計算短縮処理)        ##0ワリ回避
+    xk = []
+    for s in xrange(step) : 
+      if IT[s] == icitems_k0 : 
+        xk = xk + [ np.array(XT[s]) ]
+    m_ML = sum(xk) / float(nk) #fsumではダメ
+    print "K%d n:%d m_ML:%s" % (k,nk,str(m_ML))
+    
+    ##ハイパーパラメータ更新
+    kN = k0 + nk
+    mN = ( k0*m0 + nk*m_ML ) / kN  #dim 次元横ベクトル
+    nN = n0 + nk
+    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in xrange(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
+    VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in xrange(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
+    VN = Check_VN(VN)
+    
+  else:  #データがないとき
+    #print "nk["+str(k)+"]="+str(nk)
+    kN = k0
+    mN = m0
+    nN = n0
+    VN = V0
+  
+  return kN,mN,nN,VN
+
 
 #http://nbviewer.ipython.org/github/fonnesbeck/Bios366/blob/master/notebooks/Section5_2-Dirichlet-Processes.ipynb
 def stick_breaking(alpha, k):
@@ -128,4 +157,38 @@ def levenshtein_distance(a, b):
     # print m
     return m[-1][-1]
 
-    
+#remove <s>,<sp>,</s> and "\r", "": if its were segmented to words.
+def Ignore_SP_Tags(itemList):
+  for b in xrange(5):
+    if ("<s><s>" in itemList):
+      itemList.pop(itemList.index("<s><s>"))
+    if ("<s><sp>" in itemList):
+      itemList.pop(itemList.index("<s><sp>"))
+    if ("<s>" in itemList):
+      itemList.pop(itemList.index("<s>"))
+    if ("<sp>" in itemList):
+      itemList.pop(itemList.index("<sp>"))
+    if ("<sp><sp>" in itemList):
+      itemList.pop(itemList.index("<sp><sp>"))
+    if ("</s>" in itemList):
+      itemList.pop(itemList.index("</s>"))
+    if ("<sp></s>" in itemList):
+      itemList.pop(itemList.index("<sp></s>"))
+    if ("" in itemList):
+      itemList.pop(itemList.index(""))
+
+  #remove <s>,<sp>,</s>: if its exist in words.
+  for j in xrange(len(itemList)):
+    itemList[j] = itemList[j].replace("<s><s>", "")
+    itemList[j] = itemList[j].replace("<s>", "")
+    itemList[j] = itemList[j].replace("<sp>", "")
+    itemList[j] = itemList[j].replace("</s>", "")
+
+  for j in xrange(len(itemList)):
+    itemList[j] = itemList[j].replace("\r", "")  
+
+  for b in xrange(5):
+    if ("" in itemList):
+      itemList.pop(itemList.index(""))
+
+  return itemList
