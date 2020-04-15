@@ -128,7 +128,7 @@ def PosteriorParameterGIW2(k,nk,step,IT,XT,icitems_k0):
     VN = V0
   
   return kN,mN,nN,VN
-
+  
 
 #http://nbviewer.ipython.org/github/fonnesbeck/Bios366/blob/master/notebooks/Section5_2-Dirichlet-Processes.ipynb
 def stick_breaking(alpha, k):

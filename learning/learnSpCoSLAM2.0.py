@@ -1492,4 +1492,3 @@ if __name__ == '__main__':
     fp.write(str(step)+","+str(iteration_time)+"\n")
     fp.close()
 ########################################
-

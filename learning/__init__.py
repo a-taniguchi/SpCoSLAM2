@@ -1,6 +1,6 @@
 #coding:utf-8
 #This file for setting parameters
-#Akira Taniguchi 2017/01/18-2018/02/11-2018/12/22-
+#Akira Taniguchi 2017/01/18-2018/02/11-2018/12/22- 
 import numpy as np
 
 ####################Parameters####################
