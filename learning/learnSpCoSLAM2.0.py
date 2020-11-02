@@ -368,7 +368,8 @@ def ParticleSearcher(trialname):
     #print c_count,i
     p_trajectory[i][c_count] = p[c_count][i]
     
-    #if (step == 1): ##CT,ITは空の配列
+    # If you get error message for CT, IT in first step, please remove these 4 lines comment-out (#372-#375).
+    #if (step == 1): ##CT,IT is empty list in old version.
     #  CT[i] = CTtemp[i]
     #  IT[i] = ITtemp[i]
     #el
@@ -1333,7 +1334,7 @@ if __name__ == '__main__':
       print "Read Ct,it data."
       print "CT",CT[i]
       print "IT",IT[i]
-      ct, it, p_weight_log[i],p_WS_log[i] = Learning(step, filename, i, Xp, ST, W_list[i], CT[i], IT[i], FT)     ## Learning of spatial concepts
+      ct, it, p_weight_log[i],p_WS_log[i] = Learning(step, filename, i, Xp[i], ST, W_list[i], CT[i], IT[i], FT)     ## Learning of spatial concepts
       print "Particle:",i," Learning complete!"
       
       WriteParticleData(filename, step, i, Xp[i], p_weight_log[i], ct, it, CT[i], IT[i])  #重みは正規化されてない値が入る
