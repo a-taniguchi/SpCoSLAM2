@@ -1,0 +1,13 @@
+path:        ./albertBimg.bag
+version:     2.0
+duration:    11:01s (661s)
+start:       Sep 22 2005 16:18:01.18 (1127373481.18)
+end:         Sep 22 2005 16:29:02.51 (1127374142.51)
+size:        6.0 MB
+messages:    21301
+compression: none [8/8 chunks]
+types:       sensor_msgs/LaserScan [90c7ef2dc6895d81024acba2ac42f369]
+             tf2_msgs/TFMessage    [94810edda583a504dfda3829e70d7eec]
+topics:      scan    4167 msgs    : sensor_msgs/LaserScan
+             tf     17134 msgs    : tf2_msgs/TFMessage
+
