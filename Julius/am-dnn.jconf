@@ -1,0 +1,20 @@
+##
+## ディクテーションキット DNN-HMM版音響モデル・入力設定
+##
+
+# 音響モデル: DNN-HMM
+-h model/dnn/binhmm.SID
+#-hlist model/dnn/logicalTri
+-hlist model/dnn/logicalTri.bin
+
+# DNNモデルは音素セットが異なるため，発音辞書も異なる
+#-v model/lang_m/bccwj.60k.pdp.htkdic
+
+# 言語モデル重み・単語挿入ペナルティ
+-lmp  14 0
+-lmp2 14 0
+
+# 入力: マイク
+#-input mic
+
+## EOF
