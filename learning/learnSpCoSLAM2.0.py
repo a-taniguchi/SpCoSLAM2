@@ -369,11 +369,10 @@ def ParticleSearcher(trialname):
     p_trajectory[i][c_count] = p[c_count][i]
     
     # If you get error message for CT, IT in first step, please remove these 4 lines comment-out (#372-#375).
-    #if (step == 1): ##CT,IT is empty list in old version.
-    #  CT[i] = CTtemp[i]
-    #  IT[i] = ITtemp[i]
-    #el
-    if (step == 2): ##step==1のときの推定値を強制的に1にする
+    if (step == 1): ##CT,IT is empty list in old version.
+      CT[i] = CTtemp[i]
+      IT[i] = ITtemp[i]
+    elif (step == 2): ##step==1のときの推定値を強制的に1にする
       CT[i] = [1]
       IT[i] = [1]
     elif (steplist[-2][0] == m_count): #m_countが直前のステップにおいても同じ場合の例外処理

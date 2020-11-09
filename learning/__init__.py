@@ -98,7 +98,7 @@ NbestNum = 10 #The number of N of N-best (n<=10)
 #Setting of PATH for output folder
 #パスはUbuntu使用時とWin使用時で変更する必要がある。特にUbuntuで動かすときは絶対パスになっているか要確認。
 #win:相対パス、ubuntu:絶対パス
-datafolder   = "/mnt/hgfs/D/Dropbox/SpCoSLAM/data/"        #PATH of data out put folder
+datafolder   = "/home/akira/Dropbox/SpCoSLAM/data/"        #PATH of data out put folder
 #"/home/akira/Dropbox/SpCoSLAM/data/" #"./../datadump/" 
 # "/mnt/hgfs/D/akira/Dropbox/SpCoSLAM/data/" 
 
