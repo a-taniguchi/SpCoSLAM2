@@ -681,7 +681,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       theta = [(np.array(Nle_c[0]) + chi0 ) / (sum(Nle_c[0]) + E*chi0)] #[thetac_temp[0]]
       
       #nk = 1
-      kN,mN,nN,VN = PosteriorParameterGIW2(1,1,1,[0],XT_list[0],0)
+      kN,mN,nN,VN = PosteriorParameterGIW2(1,1,1,[0],XT_list,0)
       """
       xk = [np.array([XT[0].x, XT[0].y])]
       m_ML = sum(xk) #/ float(nk) #fsumではダメ
